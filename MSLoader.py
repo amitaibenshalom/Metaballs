@@ -24,11 +24,19 @@ class MarchingSquaresLoader():
         self.squaresHeight =int(screen_height / screen_width * self.resolution) # number of squares in y axis
         self.squareSide = screen_width / self.resolution  # size of the side of the square
 
+    def inc_threshold(self, t):
+        if self.threshold <= MIN_THRESHOLD / self.width and t < 0 or self.threshold >= MAX_THRESHOLD / self.width and t > 0:
+            return
+        self.threshold += t
+
     def get_resolution(self):
         return self.resolution
     
     def get_num_of_balls(self):
         return len(self.metaballs)
+    
+    def get_threshold(self):
+        return self.threshold
 
     def get_total_potential(self, x, y):
         p = 0
