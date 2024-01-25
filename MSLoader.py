@@ -24,6 +24,12 @@ class MarchingSquaresLoader():
         self.squaresHeight =int(screen_height / screen_width * self.resolution) # number of squares in y axis
         self.squareSide = screen_width / self.resolution  # size of the side of the square
 
+    def get_resolution(self):
+        return self.resolution
+    
+    def get_num_of_balls(self):
+        return len(self.metaballs)
+
     def get_total_potential(self, x, y):
         p = 0
         for ball in self.metaballs:
@@ -80,7 +86,6 @@ class MarchingSquaresLoader():
         for r in range (self.squaresHeight):
             for c in range (self.squaresWidth):
                 self.draw_by_index(self.get_square_case(r, c), r, c)
-        pygame.display.flip()
 
     def move_balls(self):
         for ball in self.metaballs:
