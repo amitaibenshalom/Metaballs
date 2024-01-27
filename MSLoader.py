@@ -15,6 +15,7 @@ class MarchingSquaresLoader():
         self.squaresWidth = resolution  # number of squares in x axis
         self.squaresHeight =int(height / width * resolution) # number of squares in y axis
         self.squareSide = width / resolution  # size of the side of the square
+        self.corners = [[0 for _ in range(self.squaresWidth + 1)] for _ in range(self.squaresHeight + 1)]
 
     def inc_resolution(self, r):
         if self.resolution == MIN_RESOLUTION and r < 0 or self.resolution == MAX_RESOLUTION and r > 0:
@@ -23,6 +24,8 @@ class MarchingSquaresLoader():
         self.squaresWidth = self.resolution
         self.squaresHeight =int(screen_height / screen_width * self.resolution) # number of squares in y axis
         self.squareSide = screen_width / self.resolution  # size of the side of the square
+        self.corners = [[0 for _ in range(self.squaresWidth + 1)] for _ in range(self.squaresHeight + 1)]
+        self.update_corners()
 
     def inc_threshold(self, t):
         if self.threshold <= MIN_THRESHOLD / self.width and t < 0 or self.threshold >= MAX_THRESHOLD / self.width and t > 0:
@@ -49,11 +52,17 @@ class MarchingSquaresLoader():
             return 1
         return 0
 
+    def update_corners(self):
+        for r in range (self.squaresHeight + 1):
+            for c in range (self.squaresWidth + 1):
+                self.corners[r][c]  = self.above_threshold(c * self.squareSide, r * self.squareSide)
+
     def get_square_case(self, r, c):
-        index = self.above_threshold(c * self.squareSide, (r + 1) * self.squareSide) 
-        index += 2 * self.above_threshold((c + 1) * self.squareSide, (r + 1) * self.squareSide)
-        index += 4 * self.above_threshold((c + 1) * self.squareSide, r * self.squareSide)
-        index += 8 * self.above_threshold(c * self.squareSide, r * self.squareSide)
+        # index = self.corners(c, r + 1) 
+        # index += 2 * self.corners(c + 1, r + 1)
+        # index += 4 * self.corners(c + 1, r)
+        # index += 8 * self.corners(c, r)
+        index = self.corners[r + 1][c] + (self.corners[r + 1][c + 1] << 1) + (self.corners[r][c + 1] << 2) + (self.corners[r][c] << 3)        
         return index
 
     # draw square from lookup table
@@ -91,6 +100,7 @@ class MarchingSquaresLoader():
             
     def draw(self):
         self.screen.fill(bg_color)
+        self.update_corners()
         for r in range (self.squaresHeight):
             for c in range (self.squaresWidth):
                 self.draw_by_index(self.get_square_case(r, c), r, c)
